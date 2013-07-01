@@ -4,7 +4,7 @@
 ! You may use this software under the terms of the GNU General Public License (GPL)
 ! version 3 or, at your option, any later version
 
-module extendable_arrays
+module array_utils
 
 #for $interface_name in ['resize', 'extend', 'insert']
 interface $interface_name
@@ -104,4 +104,4 @@ end subroutine insert_row_${typeN}
 
 #end for
 
-end module extendable_arrays
+end module array_utils
