@@ -8,16 +8,36 @@ module array_utils
 
 #for $interface_name in ['resize', 'extend', 'insert']
 interface $interface_name
-  module procedure ${', '.join([interface_name+'_'+typeN for typeN in $all_typeN])}
+#for N, longtype, shorttype, typeN, dNs, colons in $descriptor_tuples
+  module procedure ${interface_name}_${typeN}
+#end for
 end interface $interface_name
 
 #end for
 
+interface insert_read
+#for N, longtype, shorttype, typeN, dNs, colons in $descriptor_tuples
+  module procedure insert_read_fd_${typeN}
+  module procedure insert_read_str_${typeN}
+#end for
+end interface insert_read
+
 interface insert_row
-  module procedure ${', '.join([interface_name+'_'+typeN 
-                                for N, longtype, shorttype, typeN, dNs, colons in $descriptor_tuples
-                                if (N > 1)])}
+#for N, longtype, shorttype, typeN, dNs, colons in $descriptor_tuples
+#if (N > 1)
+  module procedure insert_row_${typeN}
+#end if
+#end for
 end interface insert_row
+
+interface insert_read_row
+#for N, longtype, shorttype, typeN, dNs, colons in $descriptor_tuples
+#if (N > 1)
+  module procedure insert_read_row_fd_${typeN}
+  module procedure insert_read_row_str_${typeN}
+#end if
+#end for
+end interface insert_read_row
 
 contains
 
@@ -87,6 +107,32 @@ pure subroutine insert_${typeN} (arr, ${', '.join(dNs)}, item, fill)
 
 end subroutine insert_${typeN}
 
+subroutine insert_read_fd_${typeN} (arr, ${', '.join(dNs)}, fd, fill)
+  implicit none
+  ${longtype}, allocatable, intent(inout) :: arr(${','.join(colons)})
+  integer, intent(in) :: ${', '.join(dNs)}
+  integer, intent(in) :: fd
+  ${longtype}, intent(in), optional :: fill
+
+  call extend_${typeN} (arr, ${', '.join(dNs)}, fill)
+
+  read (fd,*) arr(${', '.join(dNs)})
+
+end subroutine insert_read_fd_${typeN}
+
+pure subroutine insert_read_str_${typeN} (arr, ${', '.join(dNs)}, str_to_read, fill)
+  implicit none
+  ${longtype}, allocatable, intent(inout) :: arr(${','.join(colons)})
+  integer, intent(in) :: ${', '.join(dNs)}
+  character(len=*), intent(in) :: str_to_read
+  ${longtype}, intent(in), optional :: fill
+
+  call extend_${typeN} (arr, ${', '.join(dNs)}, fill)
+
+  read (str_to_read,*) arr(${', '.join(dNs)})
+
+end subroutine insert_read_str_${typeN}
+
 #if (N > 1)
 pure subroutine insert_row_${typeN} (arr, ${', '.join(dNs[1:])}, item, fill)
   implicit none
@@ -100,6 +146,32 @@ pure subroutine insert_row_${typeN} (arr, ${', '.join(dNs[1:])}, item, fill)
   arr(:,${', '.join(dNs[1:])}) = item
 
 end subroutine insert_row_${typeN}
+
+subroutine insert_read_row_fd_${typeN} (arr, ${', '.join(dNs)}, fd, fill)
+  implicit none
+  ${longtype}, allocatable, intent(inout) :: arr(${','.join(colons)})
+  integer, intent(in) :: ${', '.join(dNs)}
+  integer, intent(in) :: fd
+  ${longtype}, intent(in), optional :: fill
+
+  call extend_${typeN} (arr, ${', '.join(dNs)}, fill)
+
+  read(fd, *) arr(:,${', '.join(dNs[1:])})
+
+end subroutine insert_read_row_fd_${typeN}
+
+pure subroutine insert_read_row_str_${typeN} (arr, ${', '.join(dNs)}, str_to_read, fill)
+  implicit none
+  ${longtype}, allocatable, intent(inout) :: arr(${','.join(colons)})
+  integer, intent(in) :: ${', '.join(dNs)}
+  character(len=*), intent(in) :: str_to_read
+  ${longtype}, intent(in), optional :: fill
+
+  call extend_${typeN} (arr, ${', '.join(dNs)}, fill)
+
+  read(str_to_read, *) arr(:,${', '.join(dNs[1:])})
+
+end subroutine insert_read_row_str_${typeN}
 #end if
 
 #end for
