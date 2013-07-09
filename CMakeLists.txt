@@ -8,7 +8,3 @@ add_custom_command(OUTPUT "array-utils.F90"
                    ARGS "gen-array-utils.py" "array-utils.tmpl.F90" "${CMAKE_CURRENT_BINARY_DIR}/array-utils.F90" 
                    DEPENDS "gen-array-utils.py" "array-utils.tmpl.F90"
                    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" )
-
-if (Fortran_COMPILER_NAME MATCHES "gfortran")
-  set_source_files_properties ( "array-utils.F90" COMPILE_FLAGS "-ffree-line-length-none" )
-endif (Fortran_COMPILER_NAME MATCHES "gfortran")
