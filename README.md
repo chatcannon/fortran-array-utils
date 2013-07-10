@@ -5,7 +5,10 @@ Syntactic sugar for resizing Fortran allocatable arrays (and related actions suc
 
 The target use case for this module is reading in data from a file or files, where it is not known in advance how big the file is.
 It is assumed that reading the data is not time-critical, but that the data once read may be used in time-critical inner loops of the application.
-For this reason the code does more copying and reallocating than would be strictly necessary, in order to
+For this reason the code does more copying and reallocating than would be strictly necessary, so that normal allocatable arrays of the correct size
+are always used.
+
+N.B. The code generation requires python 2 and Cheetah. The 'generated' branch contains a pre-generated copy of array-utils.F90
 
     resize(array, {dimensions}, [fill])
 will resize `array` to `dimensions`, copying as much of the array as will fit inside the new dimensions and optionally filling any remaining space with `fill`
