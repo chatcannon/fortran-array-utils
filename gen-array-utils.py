@@ -39,7 +39,7 @@ from Cheetah import Template
 
 Nmax = 3
 types = [("INTEGER", "int"),
-         ("REAL", "real"),
+         ("CHARACTER(LEN=*)", "char"),
          ("DOUBLE PRECISION", "dble")]
 
 descriptors = []

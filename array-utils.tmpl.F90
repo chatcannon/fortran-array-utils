@@ -77,7 +77,12 @@ pure subroutine resize_${typeN} (arr, ${', '.join(dNs)}, fill)
 
   integer :: arrshape(${N})
   integer :: ${', '.join([dN+'_min' for dN in dNs])}
+
+#if ($longtype.upper() == 'CHARACTER(LEN=*)')
+  CHARACTER(LEN=len(arr)), allocatable :: tmp(${','.join(colons)})
+#else
   ${longtype}, allocatable :: tmp(${','.join(colons)})
+#end if
 
   if (${' .and. '.join(['(%s == 0)' % dN for dN in dNs])}) then
     if(allocated(arr)) deallocate(arr)
@@ -112,6 +117,12 @@ pure subroutine extend_${typeN} (arr, ${', '.join(dNs)}, fill)
 
   integer :: arrshape(${N})
   integer :: ${', '.join([dN+'_max' for dN in dNs])}
+
+  if (.not. allocated(arr)) then
+    allocate(arr(${', '.join(dNs)}))
+    if (present(fill)) arr = fill
+    return
+  end if
 
   arrshape = shape(arr)
 #for i,dN in enumerate(dNs)
