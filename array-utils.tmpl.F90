@@ -126,7 +126,20 @@ pure subroutine extend_${typeN} (arr, ${', '.join(dNs)}, fill)
 
   arrshape = shape(arr)
 #for i,dN in enumerate(dNs)
-  ${dN}_max = max(${dN}, arrshape(${i+1}))
+  if (arrshape(${i+1}) >= ${dN}) then
+    ${dN}_max = arrshape(${i+1})
+  else
+    if (${dN} <= ${extend_sizes[0]}) then
+      ${dN}_max = ${dN}
+#for isize in $extend_sizes[1:]
+    else if (${dN} <= ${isize}) then
+      ${dN}_max = ${isize}
+#end for
+    else
+      ${dN}_max = ((${dN} / ${extend_sizes[-1]}) + 1) * ${extend_sizes[-1]}
+    end if
+  end if
+
 #end for
   call resize_${typeN} (arr, ${', '.join([dN+'_max' for dN in dNs])}, fill)
 end subroutine extend_${typeN}
