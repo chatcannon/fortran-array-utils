@@ -131,12 +131,12 @@ pure subroutine extend_${typeN} (arr, ${', '.join(dNs)}, fill)
   else
     if (${dN} <= ${extend_sizes[0]}) then
       ${dN}_max = ${dN}
-#for isize in $extend_sizes[1:]
+#for isize in $extend_sizes[1:-1]
     else if (${dN} <= ${isize}) then
       ${dN}_max = ${isize}
 #end for
     else
-      ${dN}_max = ((${dN} / ${extend_sizes[-1]}) + 1) * ${extend_sizes[-1]}
+      ${dN}_max = ceiling(real(${dN}) / ${extend_sizes[-1]}) * ${extend_sizes[-1]}
     end if
   end if
 
